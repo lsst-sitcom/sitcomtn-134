@@ -1,0 +1,80 @@
+\documentclass[SE,authoryear,toc]{lsstdoc}
+\input{meta}
+
+% Package imports go here.
+
+% Local commands go here.
+
+%If you want glossaries
+%\input{aglossary.tex}
+%\makeglossaries
+
+\title{CBP Pointing and Ghosting Simulation Notebook}
+
+% This can write metadata into the PDF.
+% Update keywords and author information as necessary.
+\hypersetup{
+    pdftitle={CBP Pointing and Ghosting Simulation Notebook},
+    pdfauthor={Kane Sjoberg},
+    pdfkeywords={}
+}
+
+% Optional subtitle
+% \setDocSubtitle{A subtitle}
+
+\author{%
+Kane Sjoberg
+}
+
+\setDocRef{SITCOMTN-134}
+\setDocUpstreamLocation{\url{https://github.com/lsst-sitcom/sitcomtn-134}}
+
+\date{\vcsDate}
+
+% Optional: name of the document's curator
+% \setDocCurator{The Curator of this Document}
+
+\setDocAbstract{%
+This notebook performs raytracing through the CBP and LSST and computes ghosting and transmission profiles. It has three main uses: 
+1. Returns CBP and LSST alt/az pointings for a given positioning of the CBP within the observatory dome and desired CBP pointing on the M1 pupil. 
+2. Raytracing for any CBP mask, returning final beam positions on the focal plane of LSSTcam and Comcam. 
+3. Ghosting analysis: raytracing returns realistic estimations of ghosting along with transmission values for the CBP across the wavelength spectrum.
+}
+
+% Change history defined here.
+% Order: oldest first.
+% Fields: VERSION, DATE, DESCRIPTION, OWNER NAME.
+% See LPM-51 for version number policy.
+\setDocChangeRecord{%
+  \addtohist{1}{YYYY-MM-DD}{Unreleased.}{Kane Sjoberg}
+}
+
+
+\begin{document}
+
+% Create the title page.
+\maketitle
+% Frequently for a technote we do not want a title page  uncomment this to remove the title page and changelog.
+% use \mkshorttitle to remove the extra pages
+
+% ADD CONTENT HERE
+% You can also use the \input command to include several content files.
+
+\appendix
+% Include all the relevant bib files.
+% https://lsst-texmf.lsst.io/lsstdoc.html#bibliographies
+\section{References} \label{sec:bib}
+\renewcommand{\refname}{} % Suppress default Bibliography section
+\bibliography{local,lsst,lsst-dm,refs_ads,refs,books}
+
+% Make sure lsst-texmf/bin/generateAcronyms.py is in your path
+\section{Acronyms} \label{sec:acronyms}
+\input{acronyms.tex}
+% If you want glossary uncomment below -- comment out the two lines above
+%\printglossaries
+
+
+
+
+
+\end{document}
