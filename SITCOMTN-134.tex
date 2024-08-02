@@ -60,6 +60,60 @@ This notebook performs raytracing through the CBP and LSST and computes ghosting
 % ADD CONTENT HERE
 % You can also use the \input command to include several content files.
 
+\begin{abstract}
+This note gives an overview of a jupyter notebook that performs raytracing through the CBP and LSST and computes ghosting and transmission profiles.
+
+It has three main uses:
+1. Returns CBP and LSST alt/az pointings for a given positioning of the CBP within the observatory dome and desired CBP pointing on the M1 pupil.
+2. Raytracing for any CBP mask, returning final beam positions on the focal plane of LSSTcam and Comcam.
+3. Ghosting analysis: raytracing returns realistic estimations of ghosting along with transmission values for the CBP across the wavelength spectrum.
+
+\end{abstract}
+
+\section{Introduction}
+The simulation notebook is designed to support the CBP's integration and simulate the results of different pinhole masks for projection into LSST. Described below is the usage overview. 
+
+\section{Dependencies}
+The following Python packages are required to run the notebook: \texttt{numpy, matplotlib, batoid, ipyvolume, os, scipy, pandas, lsst}
+
+\section{Configuring Simulation Parameters}
+The notebook allows the following parameters to be set:
+
+\begin{itemize}
+    \item \textbf{Camera Selection}: Choose between \texttt{comcam} and \texttt{lsstcam}.
+    \item \textbf{Mask Configurations}: Select a CBP pinhole masks for projection; new masks can be defined using a list of tuples where the tuples are (x,y) positions of holes in millimeters. Pre-defined masks include: \texttt{one\_per\_ccd}: places one beam on each ccd of lsstcam. \texttt{one\_per\_amp}: places on beam on each amplifier of comcam. center\_hole: a single beam, ideal for efficient interactive 3D renderings of the CBP and LSST for pointing analysis and confirmation.
+    
+    \item \textbf{Wavelength and Filter}: Input the wavelength of light and select the appropriate filter. Wavelength range is 320e-9 to 1125e-9 m. Filter options: 'u', 'g', 'r', 'i', 'z', 'y4', or None (no quotations)
+    
+    \item \textbf{Raytracing Bundle Distribution and  Density}: Two primary methods for intiating bundles of rays at the CBP focal plane. The option 'cross' defines a single bundle of \texttt{nx} rays at each pinhole, forming a symmetric cross shape of beams. This method is best suited for geometrical pointing modeling and 3D visualization. \texttt{nx} >=4 produces true crosses from raytracing; nx=3 produces single points. For realistic ghosting simulation, 'random light cone' allows users to specify the angular density of rays to be traced within each bundle with (ntheta, nphi). Furthermore, each pinhole in the mask initializes several bundles distributed across the pinhole area for acccurate ghosting simulations, defined by (\texttt{pinhole\_nradius}, \texttt{pinhole\_nphis}). The defaults for each are (6,6); ghosting effects change based upon the density of rays chosen, but render time is very sensitive to the density of rays chosen, especially with large pinhole masks like \texttt{one\_per\_ccd}. 
+
+    \item \textbf{Ghosting Cutoff}: Specify the minimum transmission value for non-sequential ghosting tracing. Rays reaching a fractional flux below the specified cutoff will not be included in the raytrace results. \texttt{1e-8} is the default, as this captures third-order reflection ghosting on the detector.
+    \item \textbf{Geometrical Position}: In cylindrical coordinates, set the radial distance, height, and azimuth position of the CBP relative to the telescope’s center of rotation.
+    \item \textbf{CBP Pointing}: Define the CBP's pointing on the M1 pupil plane using polar coordinates.
+    
+\end{itemize}
+
+\section{Usage Notes}
+Notebook runtime and load is sensitive to the minimum flux trace cutoff, along with the ray and bundle density parameters; significantly increasing the number or rays, lowering the flux cutoff, or increasing pinhole masks beyond the current parameters is likely to cause the notebook to crash on USDF servers. For best results, load this notebook on a 16gb / 4-core virtual machine. 
+
+\section{Analysis Sections}
+
+\subsection{Pointing Calculations}
+The notebook calculates the altitude and azimuth pointings of the CBP and LSST based on the geometrical position of the CBP relative to the main telescope. This is done via the lsst \texttt{CoordinateConverter} class to compute the necessary transformations, ensuring that the CBP's pointing aligns accurately with the M1 pupil plane.
+
+\subsection{Raytracing}
+Raytracing is performed using the \texttt{batoid} library, which models the optical path through the CBP and LSST systems based on the user geometry specified, and the output of the lsst \texttt{CoordinateConverter}. 
+
+\subsection{Ghosting Analysis}
+Ghosting analysis non-sequentially traces rays through multiple reflections within the optical system. For raytracing, accurate transmission values for each optical surface in LSST are used to calculate the transmission efficiency of the telescope and trace ghosts.
+
+\section{Known Bugs}
+There is a slight mismatch between the pinhole mask one-per-ccd and the ccds on the lsst focal plane. This is currently in the process of being fixed. 
+
+\section{Summary}
+The CBP Pointing, Transmission, and Ghosting Simulation Notebook is a comprehensive tool for evaluating the optical performance of the CBP and LSST systems. It is intended to be flexible and modular, and can accommodate new masks. 
+
+
 \appendix
 % Include all the relevant bib files.
 % https://lsst-texmf.lsst.io/lsstdoc.html#bibliographies
